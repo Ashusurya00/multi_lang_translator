@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Globalize 2.0</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="overlay">
+        <div class="container">
+            <h1>🌍 Globalize 2.0</h1>
+            <p class="tagline">Ultimate Multilingual Translator & Speech Reader</p>
+
+            <textarea id="paragraph" placeholder="Enter your text here..."></textarea>
+            <select id="language">
+                <option value="" disabled selected>🌐 Select Target Language</option>
+                {% for lang, code in all_langs.items() %}
+                <option value="{{ code }}">{{ lang }}</option>
+                {% endfor %}
+            </select>
+            <button id="translateBtn">✨ Translate & Speak</button>
+
+            <p class="warning" id="warningMsg"></p>
+
+            <div class="output-box" id="outputBox" style="display:none;">
+                <h2>🗣️ Translation</h2>
+                <p id="translatedText"></p>
+                <audio id="audioPlayer" controls style="display:none;"></audio>
+            </div>
+
+            <footer>Designed with ❤️ by <b>Ashutosh</b></footer>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#translateBtn").click(function () {
+                let paragraph = $("#paragraph").val();
+                let language = $("#language").val();
+                if (!paragraph || !language) {
+                    alert("Please enter text and select a language!");
+                    return;
+                }
+
+                $.ajax({
+                    url: "/translate",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ paragraph: paragraph, language: language }),
+                    success: function (response) {
+                        $("#translatedText").text(response.translated_text);
+                        if (response.audio_file) {
+                            $("#audioPlayer").attr("src", "/static/" + response.audio_file).show()[0].play();
+                        } else {
+                            $("#audioPlayer").hide();
+                        }
+
+                        if (response.warning_msg) {
+                            $("#warningMsg").text(response.warning_msg);
+                        } else {
+                            $("#warningMsg").text("");
+                        }
+
+                        $("#outputBox").show();
+                    },
+                    error: function (err) {
+                        alert("Error: " + err.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
