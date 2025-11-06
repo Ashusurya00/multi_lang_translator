@@ -31,5 +31,5 @@ This app allows users to translate text between multiple languages and listen to
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/<your-username>/multi-lang-translator.git
+git clone https://github.com/<Ashusurya00>/multi-lang-translator.git
 cd multi-lang-translator
